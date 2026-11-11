@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salah — aprenda a oração passo a passo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="brand-ar" lang="ar">الصَّلَاة</span>
+    <div>
+      <h1>Salah</h1>
+      <p>A oração passo a passo, com áudio em árabe</p>
+    </div>
+  </div>
+  <nav class="prayers" id="prayers" aria-label="Escolher oração"></nav>
+</header>
+
+<main class="wrap">
+  <div class="progress">
+    <div class="progress-info">
+      <span id="rakatLabel"></span>
+      <span id="stepCount"></span>
+    </div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  </div>
+
+  <article class="card" id="card">
+    <div class="pose">
+      <div class="pose-stick">
+        <div class="pose-svg" id="poseSvg"></div>
+        <div class="pose-name">
+          <span class="pose-ar" id="stepAr" lang="ar"></span>
+          <span class="pose-tr" id="stepTr"></span>
+        </div>
+      </div>
+    </div>
+    <div class="content">
+      <h2 id="stepTitle"></h2>
+      <p class="how" id="stepText"></p>
+      <ol class="lines" id="lines"></ol>
+      <p class="tip" id="stepTip" hidden></p>
+    </div>
+  </article>
+
+  <div class="controls">
+    <button class="btn ghost" id="prevBtn" aria-label="Etapa anterior">‹ Anterior</button>
+    <button class="btn primary" id="playBtn" aria-label="Tocar etapa">▶ Ouvir</button>
+    <button class="btn ghost" id="nextBtn" aria-label="Próxima etapa">Próxima ›</button>
+  </div>
+
+  <section class="settings" aria-label="Opções">
+    <label class="switch"><input type="checkbox" id="autoOpt"> <span>Modo guiado (avança sozinho)</span></label>
+    <label class="switch"><input type="checkbox" id="trOpt" checked> <span>Mostrar transliteração</span></label>
+    <label class="switch"><input type="checkbox" id="reciterOpt" checked> <span>Alcorão na voz do recitador Mishary Alafasy (precisa de internet)</span></label>
+    <label class="speed">Velocidade
+      <select id="speedOpt">
+        <option value="0.75">0,75×</option>
+        <option value="0.9">0,9×</option>
+        <option value="1" selected>1×</option>
+        <option value="1.15">1,15×</option>
+      </select>
+    </label>
+  </section>
+
+  <details class="overview">
+    <summary>Ver todas as etapas</summary>
+    <ol id="stepList"></ol>
+  </details>
+
+  <footer class="note">
+    <p><strong>Sobre este guia.</strong> Segue a forma mais ensinada entre sunitas para quem reza sozinho. Há pequenas diferenças entre as escolas (posição das mãos, o que se diz ao levantar do rukuʿ, a forma de sentar). Na dúvida, confirme com o imã da mesquita.</p>
+    <p>As frases que não são do Alcorão são lidas por voz sintetizada (pronúncia boa, mas não substitui ouvir um professor). As traduções são de sentido, não literais. <em>Allah</em> é a palavra árabe para Deus.</p>
+    <p>Atalhos: ← → mudam de etapa, espaço toca/pausa.</p>
+  </footer>
+</main>
+
+<audio id="audio" preload="auto"></audio>
+<script src="data.js"></script>
+<script src="figures.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
