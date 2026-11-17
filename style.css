@@ -64,7 +64,23 @@ button, select { font: inherit; color: inherit; }
   display: grid; grid-template-columns: 1fr;
 }
 .card.enter { animation: enter .35s ease; }
-@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+/* só opacidade: um deslocamento aqui fazia a rolagem medir a frase 8 px fora do lugar */
+@keyframes enter { from { opacity: 0; } to { opacity: 1; } }
+
+/* faixa do celular com a posição atual, quando o desenho sai da tela */
+.mini-pose {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 6;
+  display: flex; align-items: center; gap: 10px; padding: 6px 14px;
+  background: rgba(252, 245, 234, .96); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line); box-shadow: 0 6px 16px -10px rgba(31, 59, 51, .4);
+  transform: translateY(-110%); transition: transform .25s ease;
+}
+.mini-pose.show { transform: none; }
+.mini-pose img { width: 48px; height: 48px; border-radius: 10px; flex: 0 0 auto; }
+.mini-pose b { display: block; font-size: 16px; line-height: 1.2; }
+.mini-pose small { font-size: 13.5px; color: var(--ink-soft); }
+@media (min-width: 760px) { .mini-pose { display: none; } }
+@media (prefers-reduced-motion: reduce) { .card.enter { animation: none; } .mini-pose { transition: none; } }
 
 .pose {
   background: #fcf5ea; /* mesmo creme do fundo das ilustrações */
