@@ -313,7 +313,8 @@
   });
   $('stepList').addEventListener('click', (e) => {
     const b = e.target.closest('[data-go]');
-    if (b) { go(Number(b.dataset.go)); e.target.closest('details').open = false; }
+    // go() redesenha a lista e desconecta o botão clicado: fechar a lista antes.
+    if (b) { b.closest('details').open = false; go(Number(b.dataset.go)); }
   });
 
   $('autoOpt').checked = st.auto;
