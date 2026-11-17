@@ -10,6 +10,8 @@
     isha:    { name: 'Isha',    pt: 'Noite',      rakats: 4, aloud: true },
   };
   const FATIHA = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'amin'];
+  // Tashahhud em 4 partes: cada uma cabe na tela do celular e o destaque acompanha a recitação.
+  const TASHAHHUD = ['th1', 'th2', 'th3', 'th4'];
   const SURAHS = {
     1: { name: 'Al-Ikhlas (surata 112)', ids: ['ik1', 'ik2', 'ik3', 'ik4'] },
     2: { name: 'Al-Kawthar (surata 108)', ids: ['kw1', 'kw2', 'kw3'] },
@@ -17,6 +19,8 @@
   const ORD = ['', '1ª', '2ª', '3ª', '4ª'];
 
   const L = (id, rep = 1, note = '') => ({ id, rep, note });
+  const tashahhudLines = () =>
+    TASHAHHUD.map((id) => L(id, 1, id === 'th4' ? 'levante o indicador direito' : ''));
 
   function buildSteps(key) {
     const pr = PRAYERS[key];
@@ -81,14 +85,14 @@
         s.push({ r, pose: 'tashahhud', title: '1º Tashahhud (sentado)', ar: 'التَّشَهُّد الأَوَّل', tr: 'At-tashahhud al-awwal',
           text: 'Diga Allāhu akbar e sente-se como na jalsah. Recite o Tashahhud. Ao dizer “lā ilāha illa llāh”, levante o dedo indicador direito.',
           tip: 'Depois deste Tashahhud você se levanta para a 3ª rakʿah (próxima etapa).',
-          lines: [L('takbir', 1, 'ao se sentar'), L('tahiyyat')] });
+          lines: [L('takbir', 1, 'ao se sentar'), ...tashahhudLines()] });
       }
 
       if (r === n) {
         s.push({ r, pose: 'tashahhud', title: 'Tashahhud final', ar: 'التَّشَهُّد الأَخِير', tr: 'At-tashahhud al-akhīr',
           text: 'Diga Allāhu akbar e sente-se para a parte final. Recite o Tashahhud, levantando o dedo indicador direito ao dizer “lā ilāha illa llāh”.',
           tip: n > 2 ? 'Na última rakʿah de orações com 3 ou 4 rakʿahs, muitos sentam com o pé esquerdo passado por baixo da perna direita (tawarruk).' : '',
-          lines: [L('takbir', 1, 'ao se sentar'), L('tahiyyat')] });
+          lines: [L('takbir', 1, 'ao se sentar'), ...tashahhudLines()] });
         s.push({ r, pose: 'tashahhud', title: 'Bênção sobre o Profeta', ar: 'الصَّلَاةُ الإِبْرَاهِيمِيَّة', tr: 'Aṣ-ṣalāh al-Ibrāhīmiyyah',
           text: 'Ainda sentado, recite a bênção sobre o Profeta Muhammad e a família de Abraão:',
           lines: [L('salawat1'), L('salawat2')] });
@@ -129,6 +133,57 @@
   const $ = (id) => document.getElementById(id);
   const audio = $('audio');
 
+  // ---------- Rolagem ----------
+  // Só scrollToY() mexe na rolagem da página: duas rolagens suaves disparadas juntas se
+  // cancelam (era o que impedia a troca de etapa de voltar ao desenho da posição).
+  const MARGIN = 12;
+  const POSE_DWELL = 1500; // ms com a nova posição à vista antes de recitar (modo guiado)
+  const isMobile = () => matchMedia('(max-width: 759px)').matches;
+  const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let userScrollUntil = 0;
+
+  // Resolve quando a rolagem termina (evento scrollend, ou 900 ms onde ele não existe).
+  function scrollToY(y) {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const target = Math.round(Math.max(0, Math.min(y, max)));
+    return new Promise((resolve) => {
+      if (Math.abs(window.scrollY - target) < 2) { resolve(); return; }
+      if (reduceMotion()) { window.scrollTo({ top: target, behavior: 'auto' }); resolve(); return; }
+      let fallback = null;
+      const done = () => { clearTimeout(fallback); window.removeEventListener('scrollend', done); resolve(); };
+      fallback = setTimeout(done, 900);
+      window.addEventListener('scrollend', done);
+      window.scrollTo({ top: target, behavior: 'smooth' });
+    });
+  }
+
+  // Área livre da tela: abaixo da faixa da miniatura (celular) e acima da barra de botões.
+  function usableArea() {
+    const strip = isMobile() ? $('miniPose').offsetHeight : 0;
+    const barTop = document.querySelector('.controls').getBoundingClientRect().top;
+    return { top: strip + MARGIN, bottom: Math.min(window.innerHeight, barTop) - MARGIN };
+  }
+
+  // Leva a frase à área livre, rolando só o necessário.
+  async function revealLine(el) {
+    if (document.fonts && document.fonts.status !== 'loaded') await document.fonts.ready;
+    if (!el.isConnected || Date.now() < userScrollUntil) return;
+    const r = el.getBoundingClientRect();
+    const area = usableArea();
+    const d = window.SalahScroll.scrollDelta(r.top, r.bottom, area.top, area.bottom);
+    if (d) await scrollToY(window.scrollY + d);
+  }
+
+  // Leva a etapa ao topo da tela: barra de progresso, desenho e título à vista.
+  function revealStep() {
+    const progressTop = document.querySelector('.progress').getBoundingClientRect().top;
+    return scrollToY(window.scrollY + progressTop - MARGIN);
+  }
+
+  // Rolar com o dedo ou a roda suspende a rolagem automática das frases por 4 s.
+  ['wheel', 'touchmove'].forEach((ev) =>
+    window.addEventListener(ev, () => { userScrollUntil = Date.now() + 4000; }, { passive: true }));
+
   // ---------- Render ----------
   function renderPrayers() {
     $('prayers').innerHTML = Object.entries(PRAYERS).map(([k, p]) =>
@@ -147,6 +202,9 @@
     $('stepTr').textContent = step.tr;
     $('stepTitle').textContent = step.title;
     $('stepText').textContent = step.text;
+    $('miniPoseImg').src = window.figureSrc(step.pose);
+    $('miniPoseTitle').textContent = step.title;
+    $('miniPoseSub').textContent = `${ORD[step.r]} rakʿah · etapa ${st.i + 1} de ${steps.length}`;
     const tip = $('stepTip');
     tip.hidden = !step.tip;
     tip.textContent = step.tip || '';
@@ -195,7 +253,7 @@
     document.querySelectorAll('.line').forEach((el) =>
       el.classList.toggle('active', Number(el.dataset.idx) === idx));
     const el = document.querySelector(`.line[data-idx="${idx}"]`);
-    if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (el) revealLine(el);
   }
 
   function stop() {
@@ -258,7 +316,7 @@
     const after = () => {
       if (!st.auto) return;
       if (st.i < steps.length - 1) {
-        timer = setTimeout(() => { go(st.i + 1); playStep(); }, 1200);
+        timer = setTimeout(() => advance(st.i + 1), 800);
       } else {
         st.auto = false; $('autoOpt').checked = false; save();
       }
@@ -280,11 +338,25 @@
   }
 
   // ---------- Navegação ----------
-  function go(i) {
+  function go(i, { scroll = true } = {}) {
     stop();
     st.i = Math.max(0, Math.min(steps.length - 1, i));
     render();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (scroll) scrollToY(0);
+  }
+
+  // Modo guiado: troca de etapa, mostra a nova posição por POSE_DWELL e só então recita.
+  // Pausar ou trocar de etapa no meio muda o token e cancela o resto.
+  async function advance(i) {
+    go(i, { scroll: false });
+    const my = token;
+    st.playing = true;
+    updatePlayBtn();
+    await revealStep();
+    await new Promise((resolve) => { timer = setTimeout(resolve, POSE_DWELL); });
+    if (my !== token || !st.auto) return;
+    st.playing = false;
+    playStep();
   }
 
   function setPrayer(k) {
@@ -302,8 +374,8 @@
     const b = e.target.closest('[data-k]');
     if (b) setPrayer(b.dataset.k);
   });
-  $('prevBtn').onclick = () => go(st.i - 1);
-  $('nextBtn').onclick = () => { go(st.i + 1); if (st.auto) playStep(); };
+  $('prevBtn').onclick = () => (st.auto ? advance(st.i - 1) : go(st.i - 1));
+  $('nextBtn').onclick = () => (st.auto ? advance(st.i + 1) : go(st.i + 1));
   $('playBtn').onclick = () => (st.playing ? stop() : playStep());
   $('lines').addEventListener('click', (e) => {
     const b = e.target.closest('.line-play');
@@ -318,7 +390,7 @@
   });
 
   $('autoOpt').checked = st.auto;
-  $('autoOpt').onchange = (e) => { st.auto = e.target.checked; save(); if (st.auto && !st.playing) playStep(); else if (!st.auto) render(); };
+  $('autoOpt').onchange = (e) => { st.auto = e.target.checked; save(); if (st.auto && !st.playing) advance(st.i); else if (!st.auto) render(); };
   $('trOpt').checked = st.showTr;
   $('trOpt').onchange = (e) => { st.showTr = e.target.checked; save(); document.body.classList.toggle('no-tr', !st.showTr); };
   $('reciterOpt').checked = st.reciter;
@@ -329,9 +401,14 @@
   document.addEventListener('keydown', (e) => {
     if (e.target.closest('select, input')) return;
     if (e.key === 'ArrowRight') { e.preventDefault(); $('nextBtn').click(); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); go(st.i - 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); $('prevBtn').click(); }
     else if (e.key === ' ') { e.preventDefault(); $('playBtn').click(); }
   });
+
+  // Celular: quando o desenho sai da tela, a faixa do topo mostra a posição atual.
+  new IntersectionObserver(([entry]) => {
+    $('miniPose').classList.toggle('show', isMobile() && entry.intersectionRatio < 0.35);
+  }, { threshold: [0, 0.35, 1] }).observe($('poseSvg'));
 
   renderPrayers();
   render();

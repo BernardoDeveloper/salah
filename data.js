@@ -128,10 +128,25 @@ window.PHRASES = {
   "tr": "Rabbi ghfir lī",
   "pt": "Meu Senhor, perdoa-me."
  },
- "tahiyyat": {
-  "ar": "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ، السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ، السَّلَامُ عَلَيْنَا وَعَلَىٰ عِبَادِ اللَّهِ الصَّالِحِينَ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
-  "tr": "At-taḥiyyātu lillāhi wa ṣ-ṣalawātu wa ṭ-ṭayyibāt. As-salāmu ʿalayka ayyuha n-nabiyyu wa raḥmatu llāhi wa barakātuh. As-salāmu ʿalaynā wa ʿalā ʿibādi llāhi ṣ-ṣāliḥīn. Ashhadu an lā ilāha illa llāh, wa ashhadu anna Muḥammadan ʿabduhu wa rasūluh",
-  "pt": "As saudações, as orações e as coisas boas pertencem a Allah. Que a paz esteja contigo, ó Profeta, e a misericórdia de Allah e Suas bênçãos. Que a paz esteja conosco e com os servos virtuosos de Allah. Testemunho que não há divindade além de Allah, e testemunho que Muhammad é Seu servo e Mensageiro."
+ "th1": {
+  "ar": "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ",
+  "tr": "At-taḥiyyātu lillāhi wa ṣ-ṣalawātu wa ṭ-ṭayyibāt",
+  "pt": "As saudações, as orações e as coisas boas pertencem a Allah."
+ },
+ "th2": {
+  "ar": "السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ",
+  "tr": "As-salāmu ʿalayka ayyuha n-nabiyyu wa raḥmatu llāhi wa barakātuh",
+  "pt": "Que a paz esteja contigo, ó Profeta, e a misericórdia de Allah e Suas bênçãos."
+ },
+ "th3": {
+  "ar": "السَّلَامُ عَلَيْنَا وَعَلَىٰ عِبَادِ اللَّهِ الصَّالِحِينَ",
+  "tr": "As-salāmu ʿalaynā wa ʿalā ʿibādi llāhi ṣ-ṣāliḥīn",
+  "pt": "Que a paz esteja conosco e com os servos virtuosos de Allah."
+ },
+ "th4": {
+  "ar": "أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا اللَّهُ، وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+  "tr": "Ashhadu an lā ilāha illa llāh, wa ashhadu anna Muḥammadan ʿabduhu wa rasūluh",
+  "pt": "Testemunho que não há divindade além de Allah, e testemunho que Muhammad é Seu servo e Mensageiro."
  },
  "salawat1": {
   "ar": "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ",

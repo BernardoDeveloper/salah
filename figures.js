@@ -38,6 +38,9 @@
     </figure>`;
   };
 
+  // Só o endereço da imagem (usado pela miniatura do celular).
+  window.figureSrc = (pose) => `img/posicoes/${FILES[FILES[pose] ? pose : 'qiyam']}.webp`;
+
   // Pré-carrega todas para a troca de etapa não piscar.
   new Set(Object.values(FILES)).forEach((f) => { new Image().src = `img/posicoes/${f}.webp`; });
 })();

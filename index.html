@@ -7,9 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
+<div class="mini-pose" id="miniPose" aria-hidden="true">
+  <img id="miniPoseImg" src="img/posicoes/itidal.webp" alt="" width="48" height="48">
+  <div><b id="miniPoseTitle"></b><small id="miniPoseSub"></small></div>
+</div>
 <header class="top">
   <div class="brand">
     <span class="brand-ar" lang="ar">الصَّلَاة</span>
@@ -82,8 +86,9 @@
 </main>
 
 <audio id="audio" preload="auto"></audio>
-<script src="data.js?v=2"></script>
-<script src="figures.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="data.js?v=3"></script>
+<script src="scroll.js?v=3"></script>
+<script src="figures.js?v=3"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
